@@ -3,15 +3,16 @@ import {
   BarChart3,
   Bot,
   BrainCircuit,
+  BriefcaseBusiness,
   FileText,
+  FileUp,
   GitCompareArrows,
   GraduationCap,
   Map,
   MessageSquareText,
-  Route,
   ShieldCheck,
-  Sparkles,
-  Target
+  Target,
+  UploadCloud
 } from "lucide-react";
 import { Hero } from "@/components/Hero";
 import { FeatureCard } from "@/components/FeatureCard";
@@ -20,53 +21,57 @@ const features = [
   {
     title: "TrailScan",
     description:
-      "Analyzes the student profile, current skills, goals, confidence, interests, and available time.",
+      "Parses the uploaded resume and extracts profile details, skills, education, projects, experience, certifications, and achievements.",
     icon: <BarChart3 className="h-6 w-6" />
   },
   {
     title: "RoleMatch",
     description:
-      "Recommends best-fit internship and entry-level roles based on readiness and realistic next steps.",
+      "Recommends realistic roles using the resume-derived profile and explains fit, missing skills, and next role strategy.",
     icon: <Target className="h-6 w-6" />
   },
   {
     title: "GapMap",
     description:
-      "Identifies missing skills, priority levels, and proof projects that can validate progress.",
+      "Compares the current profile against the target role and creates prioritized skill gaps with proof tasks.",
     icon: <BrainCircuit className="h-6 w-6" />
   },
   {
     title: "MissionTrail",
     description:
-      "Creates daily proof-based tasks so students build visible portfolio evidence, not just notes.",
+      "Builds a personalized 30-day roadmap where every mission produces recruiter-inspectable proof.",
     icon: <Map className="h-6 w-6" />
+  },
+  {
+    title: "ProofVault",
+    description:
+      "Stores files, links, screenshots, GitHub, portfolio, Kaggle, Drive, and LinkedIn proof for mission review.",
+    icon: <UploadCloud className="h-6 w-6" />
   },
   {
     title: "ResumeForge",
     description:
-      "Improves weak resume bullets into honest, role-specific bullets with tools, scope, and outcomes.",
+      "Improves actual resume bullets using uploaded resume and proof data without inventing fake metrics.",
     icon: <FileText className="h-6 w-6" />
   },
   {
     title: "InterviewArena",
     description:
-      "Generates role-specific mock questions and evaluates student answers with direct feedback.",
+      "Generates interview questions and evaluates answers from the user's actual resume, projects, gaps, and target role.",
     icon: <MessageSquareText className="h-6 w-6" />
   },
   {
     title: "CareerTwin",
     description:
-      "Compares possible career paths and shows which one is realistic right now.",
+      "Compares possible career paths based on resume evidence, readiness, difficulty, missing skills, and time needed.",
     icon: <GitCompareArrows className="h-6 w-6" />
+  },
+  {
+    title: "JobMatch",
+    description:
+      "Searches real internships and jobs through Adzuna using target role and extracted resume skills.",
+    icon: <BriefcaseBusiness className="h-6 w-6" />
   }
-];
-
-const steps = [
-  "Enter student profile and target role",
-  "AI agents analyze readiness and gaps",
-  "Get a 30-day proof-based roadmap",
-  "Improve resume bullets and interview answers",
-  "Compare career paths with CareerTwin"
 ];
 
 export default function HomePage() {
@@ -78,18 +83,18 @@ export default function HomePage() {
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-trail-indigo">
-              The problem
+              Resume-first workflow
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-              Students do not lack content. They lack direction.
+              TalentTrail AI now starts with the user's real resume.
             </h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              "They do not know which role fits them.",
-              "They cannot prioritize missing skills.",
-              "They build projects that do not prove job readiness.",
-              "They struggle to turn effort into resume and interview proof."
+              "User signs up or logs in with Supabase Auth.",
+              "User uploads a PDF, DOCX, TXT resume or pastes resume text.",
+              "AI extracts a structured profile for review and correction.",
+              "Every score, roadmap, mission, interview, and job match is generated from real user data."
             ].map((item) => (
               <div key={item} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
                 <p className="text-sm leading-6 text-slate-600">{item}</p>
@@ -103,33 +108,39 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-trail-indigo">
-              The solution
+              Agentic workflow
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-              A personal career operating system for employability.
+              One resume becomes a living career operating system.
             </h2>
             <p className="mt-5 text-base leading-8 text-slate-600">
-              TalentTrail AI guides students from confusion to a clear target role, skill gap map,
-              daily missions, portfolio proof, resume improvements, and interview readiness.
+              TalentTrail AI connects resume intelligence, career diagnosis, missions, proof review,
+              resume improvement, interview preparation, and job matching into a single workflow.
             </p>
             <Link
-              href="/onboarding"
+              href="/resume-upload"
               className="focus-ring mt-7 inline-flex items-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-trail-indigo"
             >
-              Generate your trail
-              <Route className="h-4 w-4" />
+              Upload your resume
+              <FileUp className="h-4 w-4" />
             </Link>
           </div>
           <div className="rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-glow">
             <div className="mb-6 flex items-center gap-3">
               <Bot className="h-7 w-7 text-blue-200" />
               <div>
-                <h3 className="text-xl font-bold">Agentic workflow</h3>
-                <p className="text-sm text-slate-300">Specialized agents, one career trail</p>
+                <h3 className="text-xl font-bold">Realtime mentor agents</h3>
+                <p className="text-sm text-slate-300">Stored in Supabase agent runs</p>
               </div>
             </div>
             <div className="space-y-3">
-              {steps.map((step, index) => (
+              {[
+                "TrailScan parses and structures resume evidence",
+                "RoleMatch and GapMap diagnose role readiness",
+                "MissionTrail creates proof-based missions",
+                "ProofReview validates submitted work",
+                "JobMatch searches live Adzuna opportunities"
+              ].map((step, index) => (
                 <div key={step} className="flex items-center gap-4 rounded-lg bg-white/8 p-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-slate-950">
                     {index + 1}
@@ -148,7 +159,7 @@ export default function HomePage() {
             Features
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-            Seven mentor agents that make progress visible.
+            Built for a real resume-powered career trail.
           </h2>
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -165,14 +176,14 @@ export default function HomePage() {
               Social impact
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight">
-              Built for students who need clarity, not noise.
+              Career direction powered by evidence, not guesswork.
             </h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
             {[
-              ["Tier-2/3 colleges", "More practical career guidance without expensive mentoring."],
-              ["First internship seekers", "Role clarity and proof projects before applications."],
-              ["Accountability", "Daily missions make progress measurable and visible."]
+              ["Private profile", "Each student sees only their own resume, missions, proof, and jobs."],
+              ["Proof of skill", "Missions focus on outputs that can be shown to recruiters."],
+              ["Real opportunities", "JobMatch uses Adzuna instead of fabricated job cards."]
             ].map(([title, text]) => (
               <div key={title} className="rounded-lg bg-white p-5 text-slate-950">
                 <GraduationCap className="h-6 w-6 text-trail-indigo" />
@@ -185,54 +196,24 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-trail-indigo">
-              Demo preview
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
-              Follow Riti from confusion to an internship-ready trail.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-slate-600">
-              The built-in demo loads Riti Prabhakar, a second-year CSE Data Science student
-              targeting a Data Analyst Intern role with one hour per day.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              ["62%", "Career readiness score"],
-              ["86%", "Data Analyst Intern match"],
-              ["30", "Proof missions"],
-              ["3", "CareerTwin paths compared"]
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
-                <p className="text-3xl font-bold text-slate-950">{value}</p>
-                <p className="mt-2 text-sm font-medium text-slate-500">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="rounded-lg bg-gradient-to-r from-trail-blue via-trail-indigo to-trail-violet p-8 text-white shadow-glow sm:p-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
               <div className="mb-3 flex items-center gap-2 text-sm font-bold text-blue-100">
                 <ShieldCheck className="h-4 w-4" />
-                Demo mode works without keys
+                Requires real resume data
               </div>
-              <h2 className="text-3xl font-bold tracking-tight">Ready to show the hackathon story?</h2>
+              <h2 className="text-3xl font-bold tracking-tight">Start with signup and resume upload.</h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-blue-50">
-                Launch the demo dashboard, then explore roadmap, resume, interview, and CareerTwin.
+                The dashboard stays empty until TalentTrail AI has authenticated user data and an
+                uploaded resume to analyze.
               </p>
             </div>
             <Link
-              href="/dashboard"
-              className="focus-ring inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5"
+              href="/auth"
+              className="focus-ring inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5"
             >
-              Open dashboard
-              <Sparkles className="h-4 w-4" />
+              Create account
             </Link>
           </div>
         </div>

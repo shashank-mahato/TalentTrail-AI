@@ -1,5 +1,5 @@
 import type { RoadmapDay } from "@/lib/types";
-import { Clock, Flag, Sparkles } from "lucide-react";
+import { Clock, Flag } from "lucide-react";
 
 interface RoadmapCardProps {
   day: RoadmapDay;
@@ -31,10 +31,6 @@ export function RoadmapCard({ day }: RoadmapCardProps) {
           <span>{day.estimatedTime}</span>
         </div>
       </div>
-      <button className="focus-ring mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-trail-indigo">
-        <Sparkles className="h-4 w-4" />
-        Mark as planned
-      </button>
     </article>
   );
 }

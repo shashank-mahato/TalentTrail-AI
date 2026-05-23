@@ -6,165 +6,188 @@ Tagline: **Your personalized trail from skills to career.**
 
 ## Project overview
 
-TalentTrail AI is a Next.js MVP that acts like a personal career operating system for college students. It analyzes a student profile, recommends realistic internship roles, maps skill gaps, generates a 30-day proof-based roadmap, improves resume bullets, evaluates interview answers, and compares career paths with CareerTwin.
+TalentTrail AI is a resume-powered career operating system for students. A user signs up, uploads a real resume, reviews the extracted profile, and then uses AI agents to generate career diagnosis, role recommendations, skill gaps, a 30-day proof-based roadmap, missions, proof reviews, resume improvements, interview practice, CareerTwin path comparisons, and real job searches.
 
-The app works in demo mode even without Supabase and Gemini configured.
+The application is designed for Vercel, Supabase Auth, Supabase Postgres, Supabase Storage, Supabase Realtime, Gemini, and Adzuna.
 
 ## Problem statement
 
-Many college students, especially from tier-2 and tier-3 colleges, want internships or entry-level jobs but do not know which role fits them, what skills are missing, what to learn first, what projects to build, how to prove their skills, how to improve their resume, or how to prepare for interviews.
-
-Most students do not lack content. They lack direction, personalization, accountability, and proof of skill.
+Many college students want internships or entry-level roles but do not know which role fits them, what they are missing, what to learn first, how to prove skills, how to improve their resume, or how to prepare for interviews. TalentTrail AI turns the student's real resume into a personalized career trail.
 
 ## Solution
 
-TalentTrail AI helps a student move from “I am confused and not job-ready” to “I know my target role, skill gaps, daily tasks, portfolio proof, resume improvements, and interview preparation plan.”
-
-The base MVP uses Gemini server-side when `GEMINI_API_KEY` is available. If Gemini or Supabase are not configured, the app safely falls back to high-quality demo data.
+TalentTrail AI uses the uploaded resume as the source of truth. It extracts structured profile data, lets the user correct it, and then generates recommendations and missions from that reviewed profile. The app does not display fabricated career profiles, fabricated roadmaps, or fabricated job listings.
 
 ## Agentic AI workflow
 
-- **TrailScan** analyzes the student profile.
-- **RoleMatch** recommends best-fit career roles.
-- **GapMap** identifies missing skills and proof projects.
-- **MissionTrail** creates daily proof-based tasks.
-- **ResumeForge** improves resume bullets without inventing fake achievements.
-- **InterviewArena** generates and evaluates mock interview practice.
-- **CareerTwin** compares possible career paths and shows realistic readiness.
+- **TrailScan Agent** parses resumes and extracts profile details.
+- **RoleMatch Agent** recommends suitable career roles.
+- **GapMap Agent** identifies skill gaps and proof tasks.
+- **MissionTrail Agent** creates a 30-day roadmap and missions.
+- **ProofReview Agent** reviews uploaded proof-of-work.
+- **ResumeForge Agent** improves resume bullets without inventing metrics.
+- **InterviewArena Agent** prepares questions and evaluates answers from the resume.
+- **CareerTwin Agent** compares realistic paths from the current profile.
+- **JobMatch Agent** searches real roles through Adzuna.
+- **Notification Agent** stores career trail updates.
 
 ## Features
 
-- Premium SaaS-style landing page.
-- Demo mode for Riti Prabhakar, a second-year CSE Data Science student.
-- Onboarding form with profile, skills, goals, resume text, interests, and learning style.
-- Career readiness score and recommended roles.
-- Skill gap cards with current level, required level, priority, and proof project.
-- 30-day roadmap grouped by four weeks of daily missions.
-- Resume bullet upgrade workflow with before/after scores.
-- Interview question generation and answer evaluation.
-- CareerTwin comparison for Data Analyst Intern, Frontend Developer Intern, and AI/ML Intern.
-- Supabase-ready schema and optional persistence layer.
-- GitHub Actions CI for build verification.
-- Vercel-ready configuration.
+- Supabase Auth signup, login, logout, and protected pages.
+- Resume upload at `/resume-upload` for PDF, DOCX, TXT, or pasted text.
+- Server-side resume text extraction and Gemini strict JSON parsing.
+- Resume profile review and correction at `/resume-profile`.
+- Career readiness score, recommended roles, skill gaps, first mission, and next steps.
+- 30-day roadmap and mission tracking.
+- ProofVault file/link submission with Supabase Storage and AI review.
+- ResumeForge improvements from uploaded resume evidence.
+- InterviewArena questions and evaluation based on resume and target role.
+- CareerTwin path comparison based on resume evidence.
+- Real Adzuna job/internship search and saved jobs.
+- Supabase Realtime dashboard updates.
+- Agent Center and Notifications pages.
+- Settings page with safe integration status checks.
 
 ## Tech stack
 
 - Next.js App Router
 - TypeScript
 - Tailwind CSS
-- shadcn/ui-inspired local components
-- lucide-react icons
+- lucide-react
+- Supabase Auth
+- Supabase Postgres
+- Supabase Storage
+- Supabase Realtime
 - Gemini API via `@google/generative-ai`
-- Supabase client via `@supabase/supabase-js`
-- localStorage fallback for demo and browser persistence
-- Vercel deployment compatibility
-- GitHub Actions
+- Adzuna Jobs API
+- PDF/DOCX/TXT parsing via `pdf-parse` and `mammoth`
+- Vercel deployment
+- GitHub Actions CI
 
 ## Pages
 
 - `/` landing page
-- `/onboarding` student onboarding and career fit generation
-- `/dashboard` main student dashboard
-- `/roadmap` 30-day roadmap
+- `/auth` signup and login
+- `/onboarding` resume-first onboarding overview
+- `/dashboard` realtime user dashboard
+- `/resume-upload` resume upload and parsing
+- `/resume-profile` extracted profile review and edit
+- `/roadmap` 30-day roadmap and mission status
+- `/proof-vault` proof upload and proof review
 - `/resume` ResumeForge
 - `/interview` InterviewArena
-- `/career-twin` CareerTwin path comparison
-- `/about` project and impact overview
+- `/career-twin` CareerTwin
+- `/jobs` Adzuna job search and saved jobs
+- `/agent-center` agent runs
+- `/notifications` realtime notifications
+- `/settings` integration status
+- `/about` project overview
 
 ## API routes
 
-- `POST /api/career-fit`
-- `POST /api/roadmap`
-- `POST /api/resume`
-- `POST /api/interview`
+- `POST /api/resume/parse`
+- `POST /api/resume/analyze`
+- `POST /api/ai/career-diagnosis`
+- `POST /api/ai/generate-roadmap`
+- `POST /api/ai/review-proof`
+- `POST /api/ai/resume-forge`
+- `POST /api/ai/interview/questions`
+- `POST /api/ai/interview/evaluate`
+- `POST /api/ai/career-twin`
+- `GET /api/jobs/search`
+- `POST /api/jobs/save`
+- `GET /api/settings/status`
 
-All API routes are designed to return safe fallback data if Gemini is not configured, the API response is invalid, or an upstream error occurs.
+All protected API routes verify the Supabase authenticated user through a bearer token.
 
 ## Environment variables
 
-Create these in Vercel. Do not commit real secrets.
+The repo includes placeholder `.env` and `.env.example` files. Replace placeholders in Vercel with real values.
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=PASTE_YOUR_SUPABASE_PROJECT_URL_HERE
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE
-GEMINI_API_KEY=PASTE_YOUR_GEMINI_API_KEY_HERE
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+GEMINI_API_KEY=your_gemini_api_key
+
+ADZUNA_APP_ID=your_adzuna_app_id
+ADZUNA_APP_KEY=your_adzuna_app_key
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-## Manual setup checklist
+Server-only secrets:
 
-Manual steps after Codex pushes:
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `GEMINI_API_KEY`
+- `ADZUNA_APP_KEY`
 
-1. Open GitHub repository.
-2. Confirm GitHub Actions build passes.
-3. Create Supabase project.
-4. Copy Supabase project URL.
-5. Copy Supabase publishable key.
-6. Create Gemini API key.
-7. In Vercel, import the GitHub repository.
-8. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-   - `GEMINI_API_KEY`
-9. Run the SQL from `supabase/schema.sql` in Supabase SQL Editor.
-10. Deploy on Vercel.
-11. Test the live Vercel URL.
+Only `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `NEXT_PUBLIC_APP_URL` are browser-visible.
 
 ## Supabase setup
 
 1. Create a Supabase project.
-2. Open SQL Editor.
-3. Run `supabase/schema.sql`.
-4. Copy the project URL and publishable key into Vercel environment variables.
+2. Run `supabase/schema.sql` or `supabase/migrations/0001_real_resume_intelligence.sql`.
+3. Confirm tables are created:
+   - `profiles`
+   - `resume_documents`
+   - `resume_analyses`
+   - `career_trails`
+   - `career_results`
+   - `roadmaps`
+   - `missions`
+   - `proof_items`
+   - `resume_feedback`
+   - `interview_sessions`
+   - `saved_jobs`
+   - `agent_runs`
+   - `notifications`
+4. Confirm storage buckets exist:
+   - `resumes`
+   - `proof-files`
+5. Enable Realtime for dashboard tables if needed from Supabase Database Replication settings.
 
-The base MVP does not implement authentication. Supabase is optional and the app continues to work in demo mode without it.
+The SQL enables RLS and owner-only policies for all user-owned rows and storage paths.
 
 ## Gemini setup
 
-1. Create a Gemini API key from Google AI Studio.
-2. Add it to Vercel as `GEMINI_API_KEY`.
-3. Redeploy the Vercel project.
+Create a Gemini API key and add it to Vercel as `GEMINI_API_KEY`. Gemini is used only from server-side API routes and is never exposed to the browser.
 
-Gemini is only called from server-side API routes. The browser never receives the Gemini key.
+## Adzuna setup
+
+Create Adzuna credentials and add:
+
+- `ADZUNA_APP_ID`
+- `ADZUNA_APP_KEY`
+
+If these values are missing, `/jobs` shows a setup error instead of fallback job cards.
 
 ## Vercel deployment
 
-1. Import the GitHub repository into Vercel.
-2. Keep the framework preset as Next.js.
-3. Add the environment variables listed above.
-4. Deploy.
-
-The app has no local filesystem dependency and is compatible with Vercel serverless API routes.
+1. Import `https://github.com/shashank-mahato/TalentTrail-AI.git` into Vercel.
+2. Add all environment variables.
+3. Deploy.
+4. Sign up, upload a real resume, review the extracted profile, and run the career workflow.
 
 ## GitHub Actions testing
 
-The workflow in `.github/workflows/ci.yml` runs on push and pull request. It installs dependencies with npm, runs lint if a lint script exists, runs the TypeScript check if configured, and runs `npm run build`.
+`.github/workflows/ci.yml` runs on push and pull request. It installs dependencies, runs lint if configured, runs TypeScript checks, and builds the app.
 
-After each push, open the repository Actions tab to confirm the build passed.
+## Real workflow
 
-## Demo flow
-
-1. Open the deployed site.
-2. Click **Launch Demo**.
-3. Review Riti Prabhakar's dashboard.
-4. Open Roadmap to inspect the 30-day mission plan.
-5. Open ResumeForge and upgrade the sample bullet.
-6. Open InterviewArena and evaluate the sample answer.
-7. Open CareerTwin to compare career paths.
-
-## Future improvements
-
-- Full Supabase auth and user-specific saved progress.
-- Row-level security policies and profile ownership.
-- CareerTwin powered by live AI comparison.
-- Job description upload and resume matching.
-- Portfolio proof uploads and shareable recruiter pages.
-- Application tracker and follow-up reminders.
-- College placement cell dashboard.
+1. User signs up or logs in.
+2. User uploads a real resume or pastes resume text.
+3. TalentTrail AI parses the resume and extracts structured profile data.
+4. User reviews and edits the extracted profile.
+5. AI generates career readiness score, roles, gaps, roadmap, missions, ResumeForge suggestions, interview questions, CareerTwin paths, and real job search links.
+6. User uploads proof-of-work to ProofVault.
+7. ProofReview evaluates submitted proof.
+8. Dashboard updates through Supabase Realtime.
 
 ## Known limitations
 
-- Demo mode uses localStorage and mock data.
-- Supabase persistence is optional and best-effort in the base MVP.
-- No login or multi-user dashboard is included in this version.
-- AI output is JSON-constrained and safely falls back, but production-grade validation can be expanded.
-- CareerTwin uses mock comparison data in the base version.
+- Resume parsing quality depends on text-readable PDF/DOCX content.
+- Link-only proof review depends on the user providing enough description if the link content is not accessible.
+- Adzuna availability depends on country code, query, and API credentials.
+- The app uses a JSON editor for advanced profile correction in this upgrade; a structured field editor can be added next.
