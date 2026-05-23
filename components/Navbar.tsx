@@ -2,24 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Sparkles, X } from "lucide-react";
+import { LogOut, Menu, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/useAuth";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/onboarding", label: "Onboarding" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/resume-upload", label: "Resume Upload" },
+  { href: "/resume-profile", label: "Resume Profile" },
   { href: "/roadmap", label: "Roadmap" },
+  { href: "/proof-vault", label: "ProofVault" },
   { href: "/resume", label: "ResumeForge" },
   { href: "/interview", label: "InterviewArena" },
   { href: "/career-twin", label: "CareerTwin" },
+  { href: "/jobs", label: "Jobs" },
+  { href: "/agent-center", label: "Agents" },
+  { href: "/notifications", label: "Notifications" },
+  { href: "/settings", label: "Settings" },
   { href: "/about", label: "About" }
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { user, supabase } = useAuth();
+
+  async function signOut() {
+    await supabase?.auth.signOut();
+    window.location.href = "/auth";
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/60 bg-white/85 backdrop-blur-xl">
@@ -31,7 +45,7 @@ export function Navbar() {
           <span className="text-base font-bold tracking-tight text-slate-950">TalentTrail AI</span>
         </Link>
 
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden max-w-5xl items-center gap-1 overflow-x-auto lg:flex">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -47,11 +61,22 @@ export function Navbar() {
         </div>
 
         <Link
-          href="/onboarding"
+          href={user ? "/resume-upload" : "/auth"}
           className="focus-ring hidden rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:bg-trail-indigo md:inline-flex"
         >
-          Start Trail
+          {user ? "Upload Resume" : "Login"}
         </Link>
+
+        {user ? (
+          <button
+            type="button"
+            onClick={signOut}
+            aria-label="Log out"
+            className="focus-ring hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:text-trail-indigo md:inline-flex"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        ) : null}
 
         <button
           type="button"

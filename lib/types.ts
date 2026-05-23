@@ -1,17 +1,66 @@
 export type Priority = "High" | "Medium" | "Low";
 
-export interface StudentProfile {
-  name: string;
+export interface EducationItem {
   degree: string;
-  year: string;
-  branch: string;
+  institution?: string;
+  year?: string;
+  branch?: string;
+  score?: string;
+}
+
+export interface ExperienceItem {
+  role: string;
+  organization?: string;
+  duration?: string;
+  bullets: string[];
+}
+
+export interface ProjectItem {
+  name: string;
+  description: string;
+  skills: string[];
+  proofSignals: string[];
+}
+
+export interface CertificationItem {
+  name: string;
+  issuer?: string;
+  year?: string;
+}
+
+export interface AchievementItem {
+  title: string;
+  evidence?: string;
+}
+
+export interface ExtractedResumeProfile {
+  name?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  headline?: string;
+  education: EducationItem[];
+  skills: string[];
+  projects: ProjectItem[];
+  experience: ExperienceItem[];
+  certifications: CertificationItem[];
+  achievements: AchievementItem[];
+  resumeConcerns: string[];
+}
+
+export interface StudentProfile {
+  name?: string;
+  degree?: string;
+  year?: string;
+  branch?: string;
   currentSkills: string;
   targetRole: string;
   timePerDay: string;
-  confidenceLevel: string;
-  resumeText?: string;
-  interests: string;
-  learningStyle: string;
+  confidenceLevel?: string;
+  resumeText: string;
+  interests?: string;
+  learningStyle?: string;
+  extractedResume?: ExtractedResumeProfile;
 }
 
 export interface RecommendedRole {
@@ -34,6 +83,8 @@ export interface Mission {
   description: string;
   proofRequired: string;
   estimatedTime: string;
+  skill?: string;
+  status?: "pending" | "in_progress" | "submitted" | "reviewed" | "completed" | "Not started";
 }
 
 export interface CareerResult {
@@ -75,6 +126,12 @@ export interface ResumeFeedback {
   tips: string[];
 }
 
+export interface InterviewQuestion {
+  question: string;
+  competency: string;
+  whyAsked: string;
+}
+
 export interface InterviewFeedback {
   score: number;
   feedback: string;
@@ -93,4 +150,34 @@ export interface CareerTwinPath {
   bestNextStep: string;
   riskWarning: string;
   fitReason: string;
+}
+
+export interface JobSearchLink {
+  title: string;
+  platform: string;
+  url: string;
+  reason: string;
+}
+
+export interface ProofReview {
+  score: number;
+  verdict: string;
+  strengths: string[];
+  gaps: string[];
+  improvements: string[];
+  resumeBulletSuggestion: string;
+}
+
+export interface ResumeIntelligenceResult {
+  analysisId?: string;
+  resumeFilePath?: string;
+  extractedProfile: ExtractedResumeProfile;
+  editableProfile: StudentProfile;
+  careerResult: CareerResult;
+  roadmap: RoadmapResult;
+  missions: Mission[];
+  resumeFeedback: ResumeFeedback[];
+  interviewQuestions: InterviewQuestion[];
+  careerTwin: CareerTwinPath[];
+  jobSearchLinks: JobSearchLink[];
 }

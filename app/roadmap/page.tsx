@@ -1,61 +1,85 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Loader2, RefreshCcw } from "lucide-react";
+import { Loader2, RefreshCcw, UploadCloud } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import { AuthGate } from "@/components/AuthGate";
+import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
 import { RoadmapCard } from "@/components/RoadmapCard";
-import { demoProfile, mockRoadmap } from "@/lib/mockData";
-import { getProfile, getRoadmap, saveRoadmap } from "@/lib/storage";
-import type { RoadmapResult, StudentProfile } from "@/lib/types";
+import { useAuth } from "@/lib/useAuth";
+import { useTalentTrailData } from "@/lib/useTalentTrailData";
 
 export default function RoadmapPage() {
-  const [profile, setProfile] = useState<StudentProfile>(demoProfile);
-  const [roadmap, setRoadmap] = useState<RoadmapResult>(mockRoadmap);
-  const [loading, setLoading] = useState(false);
-  const [fallbackUsed, setFallbackUsed] = useState(false);
+  return (
+    <AuthGate>
+      <RoadmapContent />
+    </AuthGate>
+  );
+}
 
-  useEffect(() => {
-    setProfile(getProfile() ?? demoProfile);
-    setRoadmap(getRoadmap() ?? mockRoadmap);
-  }, []);
+function RoadmapContent() {
+  const { accessToken } = useAuth();
+  const { analysis, missionRows, loading, supabase, refresh } = useTalentTrailData();
+  const [generating, setGenerating] = useState(false);
+  const [message, setMessage] = useState("");
 
-  async function generateFreshRoadmap() {
-    setLoading(true);
-    setFallbackUsed(false);
-
-    try {
-      const response = await fetch("/api/roadmap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          targetRole: profile.targetRole,
-          currentSkills: profile.currentSkills,
-          timePerDay: profile.timePerDay
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("Roadmap API failed");
-      }
-
-      const generated = (await response.json()) as RoadmapResult;
-      setRoadmap(generated);
-      saveRoadmap(generated);
-    } catch {
-      setRoadmap(mockRoadmap);
-      saveRoadmap(mockRoadmap);
-      setFallbackUsed(true);
-    } finally {
-      setLoading(false);
+  async function generateRoadmap() {
+    if (!accessToken) return;
+    setGenerating(true);
+    setMessage("");
+    const response = await fetch("/api/ai/generate-roadmap", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const payload = await response.json().catch(() => null);
+    setGenerating(false);
+    if (!response.ok) {
+      setMessage(payload?.message ?? "Roadmap generation failed.");
+      return;
     }
+    setMessage("MissionTrail generated a fresh roadmap from your resume profile.");
+    await refresh();
   }
+
+  async function updateStatus(id: string, status: string) {
+    if (!supabase) return;
+    await supabase.from("missions").update({ status }).eq("id", id);
+    await refresh();
+  }
+
+  if (loading) return <main className="mx-auto max-w-7xl px-4 py-10 text-sm text-slate-600">Loading roadmap...</main>;
+
+  if (!analysis) {
+    return (
+      <main>
+        <PageHeader
+          eyebrow="MissionTrail"
+          title="30-day roadmap"
+          description="Upload your resume before generating a personalized roadmap."
+        />
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+          <EmptyState
+            icon={<UploadCloud className="h-6 w-6" />}
+            title="No resume analysis found"
+            description="MissionTrail needs your parsed resume and reviewed profile before it can create proof-based missions."
+            actionHref="/resume-upload"
+            actionLabel="Upload resume"
+          />
+        </section>
+      </main>
+    );
+  }
+
+  const roadmap = analysis.roadmap;
+  const missionByDay = new Map(missionRows.map((mission) => [Number(mission.day_number), mission]));
 
   return (
     <main>
       <PageHeader
         eyebrow="MissionTrail"
         title="30-day proof-based roadmap"
-        description="A focused roadmap that turns daily learning into visible project evidence for your target internship role."
+        description="Generated from your uploaded resume, target role, skills, gaps, and available time. Every day produces proof."
       />
 
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
@@ -65,21 +89,17 @@ export default function RoadmapPage() {
               <p className="text-sm font-semibold text-slate-500">Target role</p>
               <h2 className="mt-1 text-3xl font-bold text-slate-950">{roadmap.targetRole}</h2>
               <p className="mt-2 text-sm text-slate-600">
-                Built for {profile.timePerDay} using skills: {profile.currentSkills}
+                {missionRows.length || roadmap.roadmap.flatMap((week) => week.days).length} missions tracked.
               </p>
-              {fallbackUsed ? (
-                <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm font-medium text-amber-800">
-                  API fallback used. Demo roadmap remains available.
-                </p>
-              ) : null}
+              {message ? <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm font-medium text-blue-800">{message}</p> : null}
             </div>
             <button
               type="button"
-              onClick={generateFreshRoadmap}
-              disabled={loading}
-              className="focus-ring inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-trail-indigo disabled:cursor-not-allowed disabled:opacity-70"
+              onClick={generateRoadmap}
+              disabled={generating}
+              className="focus-ring inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-trail-indigo disabled:opacity-70"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
               Generate Fresh Roadmap
             </button>
           </div>
@@ -98,9 +118,37 @@ export default function RoadmapPage() {
                 <p className="text-sm font-medium text-slate-500">{week.days.length} daily missions</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {week.days.map((day) => (
-                  <RoadmapCard key={day.day} day={day} />
-                ))}
+                {week.days.map((day) => {
+                  const mission = missionByDay.get(day.day);
+                  return (
+                    <div key={day.day} className="space-y-3">
+                      <RoadmapCard day={day} />
+                      {mission ? (
+                        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-soft">
+                          <p className="text-sm font-semibold text-slate-700">Status: {mission.status}</p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {["in_progress", "completed"].map((status) => (
+                              <button
+                                key={status}
+                                type="button"
+                                onClick={() => updateStatus(mission.id, status)}
+                                className="focus-ring rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 hover:text-trail-indigo"
+                              >
+                                Mark {status.replace("_", " ")}
+                              </button>
+                            ))}
+                            <Link
+                              href={`/proof-vault?mission=${mission.id}`}
+                              className="focus-ring rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-white hover:bg-trail-indigo"
+                            >
+                              Upload proof
+                            </Link>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             </section>
           ))}
