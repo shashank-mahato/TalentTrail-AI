@@ -102,7 +102,7 @@ All protected API routes verify the Supabase authenticated user through a bearer
 
 ## Environment variables
 
-The repo includes placeholder `.env` and `.env.example` files. Replace placeholders in Vercel with real values.
+The repo includes a placeholder `.env` file. Replace the placeholder values in Vercel with real values.
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
